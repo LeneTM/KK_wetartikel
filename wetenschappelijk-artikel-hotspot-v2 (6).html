@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="nl"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>Wetenschappelijk artikel — Interactieve rondleiding</title>
+<style>
+  :root{
+    --accent:#00283C;
+    --accent-dark:#00283C;
+    --panel-bg:#ffffff;
+    --panel-border:#d0d8dd;
+    --text:#1a1a1a;
+    --muted:#6b6b6b;
+    --tm-oranje:#fa6432;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Segoe UI",Arial,Helvetica,sans-serif;
+    background:#ffffff;
+    color:var(--text);
+  }
+
+  .wrap{
+    max-width:1200px;
+    margin:0 auto;
+    padding:16px;
+  }
+
+  .intro{
+    font-size:14px;
+    color:var(--muted);
+    margin:0 0 12px;
+    line-height:1.5;
+  }
+  .intro b{color:var(--text);}
+
+  /* ---------- POSTER (zelfgebouwd, vervangt de screenshot) + HOTSPOTS ---------- */
+  .screenshot-stage{
+    position:relative;
+    width:100%;
+    aspect-ratio:1896/1185;
+    border:1px solid var(--panel-border);
+    border-radius:6px;
+    overflow:hidden;
+    line-height:0;
+    background:#ffffff;
+  }
+
+  /* De "poster" die de echte screenshot vervangt: layout van een echt journal-artikel */
+  .poster{
+    position:absolute;
+    inset:0;
+    padding:2.6% 4%;
+    font-family:Georgia,"Times New Roman",serif;
+    line-height:1.25;
+    color:var(--text);
+  }
+
+  /* Journal header: tijdschriftnaam, volume/issue, DOI */
+  .poster-journalbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    border-bottom:2.5px solid var(--text);
+    padding-bottom:0.8%;
+    margin-bottom:1.6%;
+    font-family:"Segoe UI",Arial,Helvetica,sans-serif;
+  }
+  .poster-journalbar .journal-naam{
+    font-size:14px;
+    font-weight:800;
+    letter-spacing:0.3px;
+    color:var(--accent-dark);
+  }
+  .poster-journalbar .journal-meta{
+    font-size:10.5px;
+    color:var(--muted);
+    text-align:right;
+    line-height:1.4;
+  }
+
+  /* Titelblok */
+  .poster-kop{
+    margin-bottom:1.8%;
+  }
+  .poster-kop .titel{
+    font-size:19px;
+    font-weight:700;
+    color:var(--text);
+    margin:0 0 5px;
+    font-family:"Segoe UI",Arial,Helvetica,sans-serif;
+  }
+  .poster-kop .auteurs{
+    font-size:11.5px;
+    color:var(--muted);
+    font-style:italic;
+    font-family:"Segoe UI",Arial,Helvetica,sans-serif;
+  }
+
+  /* Abstract: apart blok, volle breedte, los van de kolommen */
+  .poster-abstract{
+    background:var(--panel-bg);
+    border:1px solid var(--panel-border);
+    border-radius:3px;
+    padding:1.6% 2%;
+    margin-bottom:2.2%;
+  }
+  .poster-abstract .abstract-label{
+    font-family:"Segoe UI",Arial,Helvetica,sans-serif;
+    font-size:10.5px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--accent-dark);
+    margin-bottom:0.5%;
+  }
+  .poster-abstract .balk{
+    background:linear-gradient(90deg,#e3e8ee,#eef1f5);
+  }
+
+  /* Kernwoorden: regel met kleine "chips" onder het abstract */
+  .poster-keywords{
+    display:flex;
+    align-items:center;
+    gap:1%;
+    margin-bottom:2.2%;
+    font-family:"Segoe UI",Arial,Helvetica,sans-serif;
+  }
+  .poster-keywords .keywords-label{
+    font-size:11px;
+    font-weight:700;
+    font-style:italic;
+    color:var(--muted);
+    flex:0 0 auto;
+    margin-right:0.4%;
+  }
+  .poster-keywords .keyword-chip{
+    display:inline-block;
+    height:14px;
+    width:13%;
+    border-radius:10px;
+    background:var(--panel-bg);
+    border:1px solid var(--panel-border);
+  }
+
+  /* Twee kolommen voor Methoden / Resultaten / Discussie (lopen door zoals echte journal-kolommen) */
+  .poster-columns{
+    display:flex;
+    gap:3%;
+    column-rule:1px solid #eee;
+  }
+  .poster-col{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:1.4%;
+  }
+  .col-sectiekop{
+    font-family:"Segoe UI",Arial,Helvetica,sans-serif;
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    color:var(--accent-dark);
+    margin-top:1.2%;
+    margin-bottom:0.3%;
+    padding-bottom:0.3%;
+    border-bottom:1px solid var(--panel-border);
+  }
+  .col-sectiekop:first-child{margin-top:0;}
+
+  .lijn-groep{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    padding:0.5% 0;
+  }
+  .balk{
+    height:6px;
+    border-radius:3px;
+    background:linear-gradient(90deg,#e3e8ee,#eef1f5);
+  }
+  .b1{width:97%;}
+  .b2{width:89%;}
+  .b3{width:70%;}
+
+  /* Referenties: apart blok, volle breedte, onderaan, met genummerde regels */
+  .poster-references{
+    margin-top:2.4%;
+    padding-top:1.4%;
+    border-top:2px solid var(--text);
+  }
+  .references-label{
+    font-family:"Segoe UI",Arial,Helvetica,sans-serif;
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    color:var(--text);
+    margin-bottom:0.8%;
+  }
+  .ref-regel{
+    display:flex;
+    gap:6px;
+    align-items:baseline;
+    margin-bottom:0.45%;
+  }
+  .ref-nummer{
+    font-size:9.5px;
+    color:var(--muted);
+    flex:0 0 16px;
+  }
+  .ref-regel .balk{height:5px;}
+
+  .hotspot{
+    position:absolute;
+    border:2px solid rgba(0,40,60,0.60);
+    background:rgba(0,40,60,0.07);
+    border-radius:4px;
+    cursor:pointer;
+    transition:background .15s, border-color .15s, box-shadow .15s;
+  }
+  .hotspot:hover, .hotspot:focus-visible{
+    background:rgba(0,40,60,0.15);
+    border-color:#00283C;
+    box-shadow:0 0 0 3px rgba(0,40,60,0.15);
+  }
+  .hotspot.active{
+    background:rgba(250,100,50,0.15);
+    border-color:#fa6432;
+    box-shadow:0 0 0 3px rgba(250,100,50,0.25);
+  }
+  .hotspot .num{
+    position:absolute;
+    top:50%;
+    left:-30px;
+    transform:translateY(-50%);
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:#fa6432;
+    color:#fff;
+    font-size:12px;
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 1px 4px rgba(0,0,0,0.3);
+  }
+  .hotspot.active .num{background:#fa6432;}
+
+  /* ---------- FIXED EXPLANATION PANEL ---------- */
+  .main-layout{
+    display:flex;
+    gap:20px;
+    align-items:flex-start;
+  }
+  .poster-kolom{
+    flex:1 1 0;
+    min-width:0;
+  }
+  .paneel-kolom{
+    flex:0 0 340px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .explain-panel{
+    margin-top:0;
+    background:var(--panel-bg);
+    border:1px solid var(--panel-border);
+    border-radius:8px;
+    padding:18px 22px;
+    min-height:118px;
+  }
+  .explain-panel .eyebrow{
+    font-size:11.5px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:#fa6432;
+    font-weight:700;
+    margin-bottom:6px;
+  }
+  .explain-panel h3{
+    margin:0 0 8px;
+    font-size:17px;
+    color:var(--text);
+  }
+  .explain-panel p, .explain-panel ul{
+    margin:0;
+    font-size:14px;
+    line-height:1.6;
+    color:#333;
+  }
+  .explain-panel ul{
+    padding-left:20px;
+    margin-top:6px;
+  }
+  .explain-panel li{margin-bottom:5px;}
+  .explain-panel .placeholder{
+    color:var(--muted);
+    font-style:italic;
+  }
+  .explain-panel .tip{
+    background:#fff0ea;
+    border-left:4px solid #fa6432;
+    padding:8px 10px;
+    border-radius:4px;
+    margin-top:10px;
+    font-size:13.5px;
+  }
+  .explain-panel .tip b{color:#c94e24;}
+
+  .progress-note{
+    margin-top:10px;
+    font-size:12.5px;
+    color:var(--muted);
+    text-align:right;
+  }
+  .progress-note b{color:#fa6432;}
+
+  :focus-visible{outline:3px solid #fa6432;outline-offset:1px;}
+
+  @media (max-width:640px){
+    .explain-panel{padding:14px 16px;}
+    .poster-kop .titel{font-size:15px;}
+    .poster-sectie-label{font-size:10px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <p class="intro">
+    Klik op de gemarkeerde gebieden om de onderdelen van een <b>wetenschappelijk artikel</b> te verkennen.
+    De uitleg verschijnt rechts naast het artikel.
+  </p>
+
+  <div class="main-layout">
+    <div class="poster-kolom">
+      <div class="screenshot-stage" id="stage">
+
+    <!-- Zelfgebouwde "poster" van het artikel (vervangt een echte screenshot) -->
+    <div class="poster" aria-hidden="true">
+
+      <div class="poster-journalbar">
+        <div class="journal-naam">Journal of Integrative Health Research</div>
+        <div class="journal-meta">Volume 30 · Issue 8 · August 2026 · ISSN 1234-5678<br>doi:10.1234/jihr.2026.0830</div>
+      </div>
+
+      <div class="poster-kop">
+        <div class="titel">Klinische studie naar integratieve gezondheidspraktijken</div>
+        <div class="auteurs">J. Janssen, Ph.D. · K. de Vries, M.D. · M. Bakker, Ph.D., M.D. · L. Smit, Ph.D., R.N. · B. Mulder, Ph.D., M.D.</div>
+      </div>
+
+      <div class="poster-abstract">
+        <div class="abstract-label">Abstract</div>
+        <div class="lijn-groep"><div class="balk b1"></div><div class="balk b2"></div><div class="balk b3"></div></div>
+      </div>
+
+      <div class="poster-keywords">
+        <span class="keywords-label">Kernwoorden:</span>
+        <span class="keyword-chip"></span><span class="keyword-chip"></span><span class="keyword-chip"></span><span class="keyword-chip"></span>
+      </div>
+
+      <div class="poster-columns">
+        <div class="poster-col">
+          <div class="col-sectiekop">Methoden</div>
+          <div class="lijn-groep"><div class="balk b1"></div><div class="balk b2"></div></div>
+          <div class="lijn-groep"><div class="balk b1"></div><div class="balk b3"></div></div>
+          <div class="lijn-groep"><div class="balk b2"></div><div class="balk b1"></div></div>
+          <div class="col-sectiekop">Resultaten</div>
+          <div class="lijn-groep"><div class="balk b1"></div><div class="balk b3"></div></div>
+          <div class="lijn-groep"><div class="balk b2"></div><div class="balk b1"></div></div>
+        </div>
+        <div class="poster-col">
+          <div class="lijn-groep"><div class="balk b3"></div><div class="balk b1"></div></div>
+          <div class="lijn-groep"><div class="balk b1"></div><div class="balk b2"></div></div>
+          <div class="col-sectiekop">Discussie / Conclusie</div>
+          <div class="lijn-groep"><div class="balk b1"></div><div class="balk b3"></div></div>
+          <div class="lijn-groep"><div class="balk b2"></div><div class="balk b1"></div></div>
+          <div class="lijn-groep"><div class="balk b1"></div><div class="balk b3"></div><div class="balk b2"></div></div>
+        </div>
+      </div>
+
+      <div class="poster-references">
+        <div class="references-label">Referenties</div>
+        <div class="ref-regel"><span class="ref-nummer">1.</span><div class="balk b1" style="flex:1;"></div></div>
+        <div class="ref-regel"><span class="ref-nummer">2.</span><div class="balk b2" style="flex:1;"></div></div>
+        <div class="ref-regel"><span class="ref-nummer">3.</span><div class="balk b3" style="flex:1;"></div></div>
+        <div class="ref-regel"><span class="ref-nummer">4.</span><div class="balk b1" style="flex:1;"></div></div>
+      </div>
+    </div>
+
+    <!-- Hotspots gepositioneerd in procenten -->
+    <!-- 1. Titel tijdschrift en DOI -->
+    <div class="hotspot" tabindex="0" role="button" data-id="journal" style="left:4.11%; top:3.55%; width:91.77%; height:9.37%;">
+      <span class="num">1</span>
+    </div>
+
+    <!-- 2. Artikel: titel en auteurs -->
+    <div class="hotspot" tabindex="0" role="button" data-id="titelauteurs" style="left:4.11%; top:13.69%; width:91.77%; height:10.12%;">
+      <span class="num">2</span>
+    </div>
+
+    <!-- 3. Abstract -->
+    <div class="hotspot" tabindex="0" role="button" data-id="abstract" style="left:4.11%; top:24.87%; width:91.77%; height:16.53%;">
+      <span class="num">3</span>
+    </div>
+
+    <!-- 4. Kernwoorden -->
+    <div class="hotspot" tabindex="0" role="button" data-id="kernwoorden" style="left:4.11%; top:43.05%; width:91.77%; height:4.36%;">
+      <span class="num">4</span>
+    </div>
+
+    <!-- 5. Methoden (linkerkolom) -->
+    <div class="hotspot" tabindex="0" role="button" data-id="methoden" style="left:4.11%; top:49.05%; width:44.51%; height:17.43%;">
+      <span class="num">5</span>
+    </div>
+
+    <!-- 6. Resultaten (linkerkolom) -->
+    <div class="hotspot" tabindex="0" role="button" data-id="resultaten" style="left:4.11%; top:64.89%; width:44.51%; height:12.69%;">
+      <span class="num">6</span>
+    </div>
+
+    <!-- 7. Discussie / Conclusie (rechterkolom) -->
+    <div class="hotspot" tabindex="0" role="button" data-id="discussie" style="left:51.38%; top:58.41%; width:44.51%; height:19.17%;">
+      <span class="num">7</span>
+    </div>
+
+    <!-- 8. Referenties -->
+    <div class="hotspot" tabindex="0" role="button" data-id="referenties" style="left:4.11%; top:79.52%; width:91.77%; height:19.31%;">
+      <span class="num">8</span>
+    </div>
+  </div>
+
+
+    </div><!-- /.poster-kolom -->
+
+    <div class="paneel-kolom">
+      <div class="explain-panel" id="explainPanel">
+        <div class="eyebrow">Opbouw van een wetenschappelijk artikel</div>
+        <h3 id="explainTitle">Klik op een onderdeel</h3>
+        <div id="explainText" class="placeholder">
+          <p>Klik op een van de genummerde gebieden links (Tijdschrift, Titel/auteurs, Abstract, Kernwoorden, Methoden, Resultaten, Discussie/Conclusie of Referenties) om hier de uitleg te zien.</p>
+        </div>
+      </div>
+      <div class="progress-note" id="progressNote"><b>0</b> van 8 onderdelen bekeken</div>
+    </div><!-- /.paneel-kolom -->
+
+  </div><!-- /.main-layout -->
+
+  <p class="intro" style="margin-top:18px; font-size:12px;">
+    Inhoud gebaseerd op en vertaald/bewerkt naar het Nederlands uit de onderstaande bron:<br>
+    National Center for Complementary and Integrative Health. (n.d.). <i>How to make sense of a scientific
+    journal article</i>. U.S. Department of Health and Human Services, National Institutes of Health.
+    Retrieved June 25, 2026, from
+    https://www.nccih.nih.gov/health/know-science/how-to-make-sense-of-a-scientific-journal-article/overview
+  </p>
+
+</div>
+
+<script>
+const explanations = {
+  journal: {
+    title: "1 — Het tijdschrift (journal)",
+    text: `
+      <p>Helemaal boven het artikel staat de naam van het <b>wetenschappelijke tijdschrift</b> waarin het is
+      gepubliceerd, samen met volume- en nummerinformatie, de publicatiedatum en vaak een
+      <b>DOI</b> (Digital Object Identifier) — een unieke code waarmee het artikel altijd terug te vinden is.</p>
+      <ul>
+        <li>De naam van het tijdschrift geeft een eerste aanwijzing over de kwaliteit en het vakgebied: gerenommeerde, <b>peer-reviewed</b> tijdschriften laten artikelen vooraf beoordelen door onafhankelijke experts voordat ze worden gepubliceerd.</li>
+        <li>Volume en nummer (bijvoorbeeld "Volume 30, Issue 8") helpen je het artikel correct te citeren en terug te vinden.</li>
+        <li>De DOI is een blijvende link naar het originele artikel, ook als de website van het tijdschrift verandert.</li>
+      </ul>
+      <div class="tip">
+        <b>Tip:</b> Ga na of het tijdschrift peer-reviewed is. Dit is geen garantie voor perfecte kwaliteit, maar
+        het betekent dat andere experts het onderzoek hebben bekeken voordat het werd gepubliceerd.
+      </div>
+    `
+  },
+  titelauteurs: {
+    title: "2 — Artikel: titel en auteurs",
+    text: `
+      <p>Direct onder de tijdschriftgegevens vind je de <b>titel van het artikel</b> en de namen van de
+      <b>auteurs</b>, vaak met hun functietitel of academische graad (zoals Ph.D., M.D. of R.N.).</p>
+      <ul>
+        <li>De titel geeft in één zin weer waar het onderzoek over gaat — let op of die een duidelijke conclusie suggereert, of juist een open vraag stelt.</li>
+        <li>De auteurslijst laat zien wie het onderzoek heeft uitgevoerd en wie verantwoordelijk is voor de inhoud.</li>
+        <li>Academische graden en functietitels geven een indicatie van de expertise van de onderzoekers, maar zijn geen garantie voor de kwaliteit van het onderzoek zelf.</li>
+      </ul>
+      <div class="tip">
+        <b>Tip:</b> Een artikel met meerdere auteurs uit verschillende instellingen kan wijzen op een
+        samenwerkingsverband tussen onderzoeksgroepen, wat de resultaten extra kracht kan geven.
+      </div>
+    `
+  },
+  abstract: {
+    title: "3 — Samenvatting (Abstract)",
+    text: `
+      <p>Een korte beschrijving van de belangrijkste punten van het artikel. Dit kan bevatten:</p>
+      <ul>
+        <li><b>Doelstellingen:</b> welke vragen de onderzoekers willen beantwoorden.</li>
+        <li><b>Methoden:</b> welk type onderzoek de onderzoekers hebben gebruikt.</li>
+        <li><b>Resultaten:</b> wat het onderzoek heeft opgeleverd, zonder interpretatie door de auteurs.</li>
+        <li><b>Discussie/conclusie:</b> wat de resultaten betekenen en/of hoe de auteurs de resultaten interpreteren.</li>
+      </ul>
+      <div class="tip">
+        <b>Tip:</b> Let op de datum van de studie. Is ze van het afgelopen jaar? 5 jaar geleden? 15 jaar geleden?
+        Wetenschappelijke normen en technieken veranderen voortdurend. Nieuw onderzoek kan oudere resultaten
+        bevestigen, maar kan deze ook tegenspreken — wat dan weer aanleiding geeft tot verder onderzoek. Zo
+        corrigeert de wetenschap zichzelf voortdurend. De publicatiedatum geeft je een idee van hoe de studie
+        past binnen het grotere geheel van bewijs over een onderwerp.
+      </div>
+      <p style="margin-top:8px;"><b>Hoofdonderdelen:</b> in het artikel vind je gedetailleerde informatie over
+      de Methoden, de Resultaten, de Discussie/Conclusie en de Referenties.</p>
+    `
+  },
+  kernwoorden: {
+    title: "4 — Kernwoorden",
+    text: `
+      <p>Een korte lijst van <b>kernwoorden</b> (keywords) die de belangrijkste onderwerpen en begrippen van
+      het artikel samenvatten. Deze staan meestal direct onder het abstract.</p>
+      <ul>
+        <li>Kernwoorden helpen andere onderzoekers en zoekmachines om het artikel terug te vinden bij het zoeken naar een specifiek onderwerp.</li>
+        <li>Ze geven je in één oogopslag een idee van de vakgebieden en concepten die in het artikel aan bod komen.</li>
+        <li>Komen de kernwoorden overeen met waar jij naar op zoek was? Dan is de kans groter dat het artikel relevant is voor jouw vraag.</li>
+      </ul>
+    `
+  },
+  methoden: {
+    title: "5 — Methoden",
+    text: `
+      <p>Gedetailleerde informatie over het type onderzoek, de opzet van de studie, de deelnemers, de gemeten
+      uitkomsten en de stappen die zijn genomen om vertekening (bias) te voorkomen.</p>
+
+      <p style="margin-top:8px;"><b>Soorten onderzoek</b></p>
+      <ul>
+        <li><b>Fundamenteel onderzoek:</b> wetenschappers testen hypothesen om wetenschappelijke kennis te vergroten. Dit is de eerste stap van elk onderzoek.</li>
+        <li><b>Translationeel onderzoek:</b> onderzoekers bouwen verder op fundamenteel onderzoek om nieuwe manieren te ontwikkelen om aandoeningen te voorkomen, op te sporen of te behandelen.</li>
+        <li><b>Klinische studies:</b> geven het duidelijkste beeld of een behandeling veilig en effectief is bij mensen, maar zijn complex, langdurig en kostbaar — meestal pas uitgevoerd na kleinere voorbereidende studies.</li>
+        <li><b>Systematische reviews en meta-analyses:</b> onderzoekers beoordelen meerdere studies over hetzelfde onderwerp. Komen veel studies tot dezelfde conclusie, dan zijn de resultaten waarschijnlijk betrouwbaar.</li>
+      </ul>
+
+      <p style="margin-top:8px;"><b>Opzet van de studie</b></p>
+      <p>In een gecontroleerde klinische studie vergelijken onderzoekers het effect van verschillende
+      behandelingen tussen een <b>controlegroep</b> (standaardzorg of placebo) en een <b>experimentele
+      groep</b> (de nieuwe behandeling). In een <b>dubbelblinde</b> studie weten noch de deelnemers, noch de
+      onderzoekers wie tot welke groep behoort.</p>
+
+      <p style="margin-top:8px;"><b>Omvang van de studie</b></p>
+      <p>De steekproefgrootte beïnvloedt de betrouwbaarheid: kleine steekproeven leiden vaker tot
+      niet-overtuigende resultaten die op toeval kunnen berusten, terwijl grote steekproeven meestal
+      betrouwbaardere resultaten geven die de populatie beter weerspiegelen.</p>
+
+      <div class="tip">
+        <b>Tip — vertekening (bias) beperken:</b> het kan verrassend moeilijk zijn om vertekening te vermijden.
+        Ga in de opzet van de studie na of deze "geblindeerd" of "gemaskeerd" was, zodat noch de deelnemers,
+        noch de onderzoekers wisten wie welke behandeling kreeg.
+      </div>
+    `
+  },
+  resultaten: {
+    title: "6 — Resultaten",
+    text: `
+      <p><b>Wat de studie heeft laten zien.</b> Hier worden de gegevens, samenvattingen en analyses
+      gepresenteerd, vaak met tabellen, grafieken en diagrammen.</p>
+      <p style="margin-top:8px;">Om de resultaten beter te begrijpen, kun je jezelf afvragen:</p>
+      <ul>
+        <li><b>Hoe verhouden deze resultaten zich tot eerdere studies?</b> Eén enkele studie geeft zelden een definitief antwoord; herhaling met andere deelnemers helpt om betrouwbaarheid vast te stellen.</li>
+        <li><b>Wat betekenen "statistisch" en "klinisch" significant?</b> Statistisch significant betekent dat een verschil waarschijnlijk niet op toeval berust. Klinisch significant gaat over de grootte van het effect — en dus het praktische nut voor patiënten. Een verschil kan statistisch significant zijn, maar te klein om in de praktijk iets uit te maken.</li>
+        <li><b>Zijn er mogelijke belangenconflicten?</b> Hadden de sponsor of de onderzoekers een financieel of professioneel belang bij de uitkomst? De meeste tijdschriftartikelen vermelden relevante financiële relaties.</li>
+      </ul>
+    `
+  },
+  discussie: {
+    title: "7 — Discussie / Conclusie",
+    text: `
+      <p><b>Wat de resultaten betekenen.</b></p>
+      <ul>
+        <li>Dit onderdeel bevat de uitleg en de eigen mening van de auteurs over wat de resultaten betekenen.</li>
+        <li>Omdat de conclusies van de auteurs zelf zijn, kunnen anderen het er wel of niet volledig mee eens zijn.</li>
+      </ul>
+      <p style="margin-top:8px;">Lees dit onderdeel daarom kritisch, en bespreek de resultaten eventueel met
+      een zorgverlener als het om je eigen gezondheid gaat.</p>
+    `
+  },
+  referenties: {
+    title: "8 — Referenties",
+    text: `
+      <p>Eerder gepubliceerde artikelen die de auteurs hebben gebruikt om te bekijken welk gerelateerd
+      onderzoek al was uitgevoerd. Deze referenties helpen om de studie te ontwerpen en om de resultaten van
+      de studie te interpreteren.</p>
+      <p style="margin-top:8px;">Door de referenties te bekijken, kun je ook zelf nagaan op welk eerder
+      onderzoek de auteurs hun studie hebben gebaseerd, en of hun interpretatie aansluit bij de bestaande
+      literatuur.</p>
+    `
+  }
+};
+
+const stage = document.getElementById('stage');
+const explainTitle = document.getElementById('explainTitle');
+const explainText = document.getElementById('explainText');
+const progressNote = document.getElementById('progressNote');
+const seen = new Set();
+const total = Object.keys(explanations).length;
+
+function activate(hotspot){
+  document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('active'));
+  hotspot.classList.add('active');
+
+  const id = hotspot.dataset.id;
+  const info = explanations[id];
+  if(info){
+    explainTitle.textContent = info.title;
+    explainText.innerHTML = info.text;
+    explainText.classList.remove('placeholder');
+    seen.add(id);
+    progressNote.innerHTML = `<b>${seen.size}</b> van ${total} onderdelen bekeken`;
+  }
+}
+
+stage.querySelectorAll('.hotspot').forEach(h => {
+  h.addEventListener('click', () => activate(h));
+  h.addEventListener('keypress', (e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(h); } });
+});
+</script>
+
+</body></html>
